@@ -1,7 +1,9 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "LLM Chat App 前端应用，支持多种 LLM API",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,6 +1,8 @@
 # AI 智能助手项目
 
-基于 Vue3 + Element Plus + Node.js 的智能对话应用，集成 DeepSeek 大模型 API。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+基于 Vue3 + Element Plus + Node.js 的智能对话应用，支持多种 LLM API。
 
 ## 项目结构
 
@@ -81,3 +83,30 @@ const backendUrlBase = 'http://localhost:3000/api/chat';
 1. 先启动后端服务，再启动前端
 2. 开发时可以使用 `npm run dev` 热重载
 3. 生产构建使用 `npm run build`
+
+## 贡献
+
+欢迎提交 Pull Request 或提出 Issue。详细信息请参考 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+## 初始化 Git 仓库
+
+```bash
+# 初始化 Git 仓库
+git init
+
+# 添加所有文件
+git add .
+
+# 初始提交
+git commit -m "Initial commit"
+
+# 添加远程仓库
+git remote add origin <你的远程仓库URL>
+
+# 推送到远程仓库
+git push -u origin main
+```
+
+## 许可证
+
+本项目采用 [MIT 许可证](LICENSE)。

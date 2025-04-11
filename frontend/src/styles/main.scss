@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'theme';
 @use 'layout';
 @use 'messages';
 @use 'chat-items';
@@ -21,7 +22,9 @@ body {
 
 // Element Plus 自定义样式
 .el-input {
-  --el-input-bg-color: $sidebar-color;
+  --el-input-bg-color: var(--sidebar-color);
+  --el-input-text-color: var(--text-color);
+  --el-input-border-color: var(--border-color);
 }
 
 .el-button-group {
@@ -29,7 +32,58 @@ body {
 }
 
 .el-button--danger {
-  --el-button-danger-bg-color: $danger-color;
+  --el-button-danger-bg-color: var(--danger-color);
+}
+
+// 深色模式下的 Element Plus 样式
+.dark-theme {
+  // 输入框
+  .el-input {
+    --el-input-bg-color: var(--sidebar-color);
+    --el-input-text-color: var(--text-color);
+    --el-input-border-color: var(--border-color);
+  }
+
+  // 按钮
+  .el-button {
+    --el-button-text-color: var(--text-color);
+    --el-button-hover-text-color: var(--text-color);
+    --el-button-hover-bg-color: var(--sidebar-hover);
+    --el-button-hover-border-color: var(--border-color);
+
+    &.el-button--primary {
+      --el-button-bg-color: var(--primary-color);
+      --el-button-border-color: var(--primary-color);
+      --el-button-hover-bg-color: var(--primary-color);
+      --el-button-hover-border-color: var(--primary-color);
+      --el-button-active-bg-color: var(--primary-color);
+      --el-button-active-border-color: var(--primary-color);
+    }
+
+    &.el-button--info {
+      --el-button-text-color: var(--text-color);
+      --el-button-bg-color: transparent;
+      --el-button-border-color: var(--border-color);
+      --el-button-hover-text-color: var(--text-color);
+      --el-button-hover-bg-color: var(--sidebar-hover);
+      --el-button-hover-border-color: var(--border-color);
+    }
+
+    &.el-button--danger {
+      --el-button-text-color: #fff;
+    }
+  }
+
+  // 卡片
+  .el-card {
+    --el-card-bg-color: var(--sidebar-color);
+  }
+
+  // 空状态
+  .el-empty {
+    --el-empty-fill-color-0: var(--sidebar-hover);
+    --el-empty-fill-color-1: var(--sidebar-active);
+  }
 }
 
 // 自定义滚动条
@@ -50,4 +104,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+// 深色模式下的滚动条
+.dark-theme {
+  ::-webkit-scrollbar-track {
+    background: #2a2a3c;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f5c;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4a6a;
+  }
 }

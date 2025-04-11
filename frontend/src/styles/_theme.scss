@@ -1,0 +1,52 @@
+@use 'variables' as *;
+
+// 明暗主题切换
+:root {
+  // 明亮主题（默认）
+  --bg-color: #{$bg-color};
+  --sidebar-color: #{$sidebar-color};
+  --sidebar-hover: #{$sidebar-hover};
+  --sidebar-active: #{$sidebar-active};
+  --text-color: #{$text-color};
+  --primary-color: #{$primary-color};
+  --user-bubble: #{$user-bubble};
+  --ai-bubble: #{$ai-bubble};
+  --border-color: #{$border-color};
+  --danger-color: #{$danger-color};
+  --gray-color: #{$gray-color};
+
+  // 代码块颜色
+  --code-bg: #282c34;
+  --code-text: #abb2bf;
+  --code-inline-bg: #2c313a;
+  --code-inline-text: #e06c75;
+  --code-border: #3e4451;
+  --code-language-bg: #3e4451;
+  --code-line-number-color: rgba(171, 178, 191, 0.5);
+}
+
+// 深色主题
+.dark-theme,
+html.dark {
+  // 与 Element Plus 暗色主题兼容
+  --bg-color: #1a1a2e;
+  --sidebar-color: #252535;
+  --sidebar-hover: #2a2a3c;
+  --sidebar-active: #313145;
+  --text-color: #f0f0f0;
+  --primary-color: #10b981;
+  --user-bubble: #313145;
+  --ai-bubble: #252535;
+  --border-color: #3f3f5c;
+  --danger-color: #f87171;
+  --gray-color: #9ca3af;
+
+  // 代码块颜色 - 深色主题下稍微调暗一些
+  --code-bg: #1a1a24;
+  --code-text: #c9d1d9;
+  --code-inline-bg: #252535;
+  --code-inline-text: #ff7b85;
+  --code-border: #3f3f5c;
+  --code-language-bg: #313145;
+  --code-line-number-color: rgba(201, 209, 217, 0.5);
+}

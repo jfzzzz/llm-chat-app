@@ -3,25 +3,128 @@
 // Markdown 内容样式
 .message-card {
   .hljs {
-    background: #f8f8f8;
+    background: var(--code-bg);
     border-radius: 6px;
     padding: 1em;
     overflow-x: auto;
-    font-size: 0.9em;
+    font-size: 16px;
     line-height: 1.5;
+    color: var(--code-text);
+    font-family: monospace;
+    white-space: pre;
   }
 
   code:not(.hljs) {
-    background: #f3f3f3;
+    background: var(--code-inline-bg);
     padding: 0.2em 0.4em;
     border-radius: 3px;
-    font-size: 0.9em;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 16px;
+    font-family: monospace;
+    color: var(--code-inline-text);
   }
 
   pre {
     margin: 1em 0;
     position: relative;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    // 行号样式
+    &.with-line-numbers {
+      padding-left: 3.5em; // 为行号留出空间
+
+      code {
+        counter-reset: line;
+      }
+
+      .line-numbers {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3em;
+        height: 100%;
+        border-right: 1px solid var(--code-border);
+        background-color: rgba(0, 0, 0, 0.1);
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        padding-top: 2em; // 为语言标签预留空间
+        font-family: monospace;
+        font-size: 16px;
+        color: var(--code-line-number-color);
+        text-align: right;
+        user-select: none;
+      }
+
+      .line-number {
+        padding: 0 0.5em;
+        line-height: 1.5;
+        height: 1.5em; // 固定行高，确保与代码文本对齐
+        box-sizing: border-box;
+      }
+
+      // 调整代码块内容的对齐
+      code.with-line-numbers {
+        padding-left: 0; // 移除左侧填充，因为行号已经占据了这个空间
+      }
+    }
+
+    // 复制按钮样式
+    .code-copy-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 4px 8px;
+      font-size: $font-size-small;
+      color: var(--code-text);
+      background-color: rgba(40, 44, 52, 0.5);
+      border: 1px solid var(--code-border);
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s, background-color 0.2s;
+      cursor: pointer;
+      z-index: 10;
+
+      &:hover {
+        background-color: rgba(62, 68, 81, 0.8);
+      }
+
+      &.copied {
+        background-color: rgba(80, 120, 80, 0.8);
+        color: #d4d4d4;
+      }
+    }
+
+    // 语言标签样式
+    .code-language {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 4px 10px;
+      font-size: 14px; // 语言标签字体稍小一点，以区分于代码
+      font-family: monospace;
+      color: var(--code-text);
+      background-color: var(--code-language-bg);
+      border-bottom-right-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    // 当有行号时调整语言标签位置
+    &.with-line-numbers .code-language {
+      border-top-left-radius: 0;
+    }
+
+    &:hover .code-copy-button {
+      opacity: 1;
+    }
+
+    // 当有行号时调整复制按钮位置
+    &.with-line-numbers .code-copy-button {
+      right: 5px; // 保持原来的右边距
+    }
   }
 
   .markdown-table {
@@ -31,20 +134,20 @@
 
     th, td {
       padding: 0.5em 1em;
-      border: 1px solid #ddd;
+      border: 1px solid var(--code-border);
     }
 
     th {
-      background-color: #f5f5f5;
+      background-color: var(--code-inline-bg);
     }
   }
 
   blockquote {
-    border-left: 4px solid $primary-color;
+    border-left: 4px solid var(--primary-color);
     margin: 1em 0;
     padding: 0 1em;
-    color: #555;
-    background-color: #f8fafc;
+    color: var(--code-text);
+    background-color: var(--code-inline-bg);
   }
 
   ul, ol {

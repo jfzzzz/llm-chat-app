@@ -7,15 +7,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid var(--border-color);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: $sidebar-hover;
+    background-color: var(--sidebar-hover);
   }
 
   &.active {
-    background-color: $sidebar-active;
+    background-color: var(--sidebar-active);
   }
 }
 
@@ -47,5 +47,25 @@
 
   .chat-item.active & {
     opacity: 1;
+  }
+
+  // 删除按钮样式
+  .el-button--danger {
+    --el-button-danger-text-color: #ffffff !important;
+    --el-button-danger-bg-color: var(--danger-color) !important;
+    --el-button-danger-border-color: var(--danger-color) !important;
+    color: #ffffff !important;
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+
+    &:hover, &:focus, &:active {
+      --el-button-hover-text-color: #ffffff !important;
+      --el-button-hover-bg-color: var(--danger-color) !important;
+      --el-button-hover-border-color: var(--danger-color) !important;
+      color: #ffffff !important;
+      background-color: var(--danger-color) !important;
+      border-color: var(--danger-color) !important;
+      opacity: 0.9;
+    }
   }
 }

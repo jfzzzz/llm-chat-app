@@ -28,7 +28,7 @@
                 width="200"
               >
                 <template #reference>
-                  <el-button size="small" type="danger" circle plain>
+                  <el-button size="small" type="danger" circle :plain="!isDarkTheme">
                     <el-icon><Delete /></el-icon>
                   </el-button>
                 </template>
@@ -55,6 +55,11 @@
             <h1>{{ currentChat?.title || 'AI 智能助手' }}</h1>
           </div>
           <div class="header-right">
+            <el-button @click="toggleTheme" type="info" plain size="small" class="theme-toggle-btn">
+              <el-icon v-if="isDarkTheme"><Sunny /></el-icon>
+              <el-icon v-else><Moon /></el-icon>
+              {{ isDarkTheme ? '浅色模式' : '深色模式' }}
+            </el-button>
             <el-button @click="openSettings" type="primary" plain size="small">
               <el-icon><Setting /></el-icon> 设置
             </el-button>
@@ -144,20 +149,42 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
 import python from 'highlight.js/lib/languages/python';
 import bash from 'highlight.js/lib/languages/bash';
-import 'highlight.js/styles/github.min.css';
+import css from 'highlight.js/lib/languages/css';
+import scss from 'highlight.js/lib/languages/scss';
+import json from 'highlight.js/lib/languages/json';
+import xml from 'highlight.js/lib/languages/xml';
+import markdown from 'highlight.js/lib/languages/markdown';
+import sql from 'highlight.js/lib/languages/sql';
+import 'highlight.js/styles/monokai.css';
+// import 'highlight.js/styles/atom-one-dark.css';
 
 // 注册常用语言
 hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('js', javascript); // 别名
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('ts', typescript); // 别名
 hljs.registerLanguage('python', python);
+hljs.registerLanguage('py', python); // 别名
 hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('sh', bash); // 别名
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('scss', scss);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('html', xml); // 别名
+hljs.registerLanguage('markdown', markdown);
+hljs.registerLanguage('md', markdown); // 别名
+hljs.registerLanguage('sql', sql);
 import {
   ElContainer, ElHeader, ElMain, ElFooter, ElInput, ElButton, ElCard, ElIcon,
   ElAside, ElScrollbar, ElEmpty, ElPopconfirm
 } from 'element-plus';
 import {
-  Promotion, Loading, Close, Setting, Plus, ChatDotRound, Delete, Menu
+  Promotion, Loading, Close, Setting, Plus, ChatDotRound, Delete, Menu,
+  Moon, Sunny
 } from '@element-plus/icons-vue';
 
 // 导入设置面板组件
@@ -165,6 +192,121 @@ import SettingsPanel from './components/SettingsPanel.vue';
 
 // 生成唯一ID
 const generateId = () => `id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+/**
+ * 复制文本到剪贴板
+ * @param {string} text - 要复制的文本
+ */
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    // 可以添加一个复制成功的提示，但这里简化处理
+  } catch (err) {
+    console.error('复制失败:', err);
+  }
+};
+
+/**
+ * 获取语言的友好显示名称
+ * @param {string} langCode - 语言代码
+ * @returns {string} 语言的友好显示名称
+ */
+const getLanguageDisplayName = (langCode) => {
+  if (!langCode) return '';
+
+  const languageMap = {
+    // 常见语言
+    'js': 'JavaScript',
+    'javascript': 'JavaScript',
+    'ts': 'TypeScript',
+    'typescript': 'TypeScript',
+    'py': 'Python',
+    'python': 'Python',
+    'rb': 'Ruby',
+    'ruby': 'Ruby',
+    'java': 'Java',
+    'c': 'C',
+    'cpp': 'C++',
+    'cs': 'C#',
+    'csharp': 'C#',
+    'go': 'Go',
+    'rust': 'Rust',
+    'php': 'PHP',
+    'swift': 'Swift',
+    'kotlin': 'Kotlin',
+
+    // 脚本语言
+    'sh': 'Shell',
+    'bash': 'Bash',
+    'powershell': 'PowerShell',
+    'ps1': 'PowerShell',
+    'bat': 'Batch',
+    'cmd': 'Batch',
+
+    // 标记语言
+    'html': 'HTML',
+    'xml': 'XML',
+    'css': 'CSS',
+    'scss': 'SCSS',
+    'sass': 'Sass',
+    'less': 'Less',
+    'md': 'Markdown',
+    'markdown': 'Markdown',
+
+    // 数据格式
+    'json': 'JSON',
+    'yaml': 'YAML',
+    'yml': 'YAML',
+    'toml': 'TOML',
+    'ini': 'INI',
+
+    // 数据库
+    'sql': 'SQL',
+    'mysql': 'MySQL',
+    'pgsql': 'PostgreSQL',
+    'postgresql': 'PostgreSQL',
+    'mongodb': 'MongoDB',
+
+    // 其他
+    'plaintext': '纯文本',
+    'text': '纯文本',
+    'txt': '纯文本',
+    'diff': 'Diff',
+    'dockerfile': 'Dockerfile',
+    'docker': 'Dockerfile'
+  };
+
+  return languageMap[langCode.toLowerCase()] || langCode;
+};
+
+/**
+ * 处理复制按钮点击
+ * @param {Event} event - 点击事件
+ */
+const handleCopyClick = (event) => {
+  const copyButton = event.target.closest('.code-copy-button');
+  if (!copyButton) return;
+
+  const preElement = copyButton.closest('pre');
+  if (!preElement) return;
+
+  const codeElement = preElement.querySelector('code');
+  if (!codeElement) return;
+
+  const code = codeElement.textContent;
+  copyToClipboard(code);
+
+  // 更新按钮文本为“已复制”
+  const originalText = copyButton.textContent;
+  copyButton.textContent = '已复制';
+  copyButton.classList.add('copied');
+
+  // 2秒后恢复原文本
+  setTimeout(() => {
+    copyButton.textContent = originalText;
+    copyButton.classList.remove('copied');
+  }, 2000);
+};
 
 /**
  * Markdown渲染函数
@@ -192,11 +334,79 @@ const renderMarkdown = (text) => {
     .replace(/<pre><code/g, '<pre class="hljs"><code')
     .replace(/<table>/g, '<table class="markdown-table">');
 
-  // 强制重新高亮
+  // 强制重新高亮并添加复制按钮、语言标签和行号
   nextTick(() => {
     document.querySelectorAll('pre code').forEach((block) => {
       hljs.highlightElement(block);
+
+      // 获取语言名称
+      const pre = block.parentNode;
+      if (!pre) return;
+
+      // 获取语言类型
+      let language = '';
+      const classList = block.classList;
+      for (const className of classList) {
+        if (className.startsWith('language-')) {
+          language = className.replace('language-', '');
+          break;
+        }
+      }
+
+      // 添加语言标签（如果还没有）
+      if (language && !pre.querySelector('.code-language')) {
+        const languageTag = document.createElement('div');
+        languageTag.className = 'code-language';
+        languageTag.textContent = getLanguageDisplayName(language);
+        pre.appendChild(languageTag);
+      }
+
+      // 添加复制按钮（如果还没有）
+      if (!pre.querySelector('.code-copy-button')) {
+        const copyButton = document.createElement('button');
+        copyButton.className = 'code-copy-button';
+        copyButton.textContent = '复制';
+        copyButton.addEventListener('click', handleCopyClick);
+        pre.appendChild(copyButton);
+      }
+
+      // 添加行号（如果还没有）
+      if (!pre.classList.contains('line-numbers-added')) {
+        // 标记已添加行号，避免重复添加
+        pre.classList.add('line-numbers-added');
+
+        // 获取代码内容并计算行数
+        const codeContent = block.textContent;
+        const lines = codeContent.split('\n');
+        // 如果最后一行是空行，则不计算
+        const lineCount = lines[lines.length - 1].trim() === '' ? lines.length - 1 : lines.length;
+
+        // 创建行号容器
+        const lineNumbers = document.createElement('div');
+        lineNumbers.className = 'line-numbers';
+
+        // 生成行号
+        for (let i = 1; i <= lineCount; i++) {
+          const lineNumber = document.createElement('span');
+          lineNumber.className = 'line-number';
+          lineNumber.textContent = i;
+          lineNumbers.appendChild(lineNumber);
+        }
+
+        // 将行号容器添加到代码块
+        pre.appendChild(lineNumbers);
+
+        // 添加行号样式类
+        pre.classList.add('with-line-numbers');
+        block.classList.add('with-line-numbers');
+      }
     });
+
+    // 添加全局事件监听器（如果还没有添加）
+    if (!window._hasCopyEventListener) {
+      document.addEventListener('click', handleCopyClick);
+      window._hasCopyEventListener = true;
+    }
   });
 
   return DOMPurify.sanitize(styledHtml);
@@ -229,6 +439,9 @@ const models = ref([]);
 // 对话历史相关
 const chatHistory = ref([]);
 const currentChatId = ref('');
+
+// 主题相关
+const isDarkTheme = ref(true); // 默认使用暗色主题
 
 // 获取当前对话
 const currentChat = computed(() => {
@@ -305,6 +518,12 @@ const switchChat = (chatId) => {
   // 重置消息ID计数器
   nextMessageId = messages.value.length > 0 ?
     Math.max(...messages.value.map(m => m.id)) + 1 : 0;
+
+  // 滚动到底部
+  nextTick(() => {
+    const chatMain = document.querySelector('.chat-main');
+    if (chatMain) chatMain.scrollTop = chatMain.scrollHeight;
+  });
 };
 
 // 删除对话
@@ -620,6 +839,35 @@ const loadModels = () => {
   ];
 };
 
+/**
+ * 切换主题
+ */
+const toggleTheme = () => {
+  isDarkTheme.value = !isDarkTheme.value;
+  applyTheme();
+  localStorage.setItem('isDarkTheme', isDarkTheme.value ? 'true' : 'false');
+};
+
+/**
+ * 应用主题
+ */
+const applyTheme = () => {
+  // 使用 Element Plus 的主题切换
+  const htmlEl = document.documentElement;
+
+  if (isDarkTheme.value) {
+    htmlEl.classList.add('dark');
+    htmlEl.classList.add('dark-theme');
+    // 设置 Element Plus 的暗色主题
+    htmlEl.setAttribute('data-theme', 'dark');
+  } else {
+    htmlEl.classList.remove('dark');
+    htmlEl.classList.remove('dark-theme');
+    // 移除 Element Plus 的暗色主题
+    htmlEl.removeAttribute('data-theme');
+  }
+};
+
 // 组件挂载时加载对话历史和设置
 onMounted(() => {
   // 从本地存储加载设置
@@ -627,6 +875,12 @@ onMounted(() => {
   selectedModel.value = localStorage.getItem('selectedModel') || '';
   selectedProvider.value = localStorage.getItem('selectedProvider') || 'deepseek';
   apiEndpoint.value = localStorage.getItem('apiEndpoint') || 'https://api.deepseek.com/v1/chat/completions';
+
+  // 加载主题设置
+  const savedTheme = localStorage.getItem('isDarkTheme');
+  // 如果没有保存的主题设置，默认使用暗色主题
+  isDarkTheme.value = savedTheme === null ? true : savedTheme === 'true';
+  applyTheme();
 
   // 加载模型列表
   loadModels();

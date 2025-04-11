@@ -76,10 +76,11 @@
             <el-button
               type="primary"
               plain
-              icon="Plus"
               @click="showAddModelDialog = true"
               style="margin-left: 10px"
-            >添加</el-button>
+            >
+              <el-icon><Plus /></el-icon> 添加
+            </el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -343,15 +344,19 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '../styles/variables' as *;
+
 .settings-container {
   padding: 20px;
 }
 
 .form-tip {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-color);
+  opacity: 0.7;
   margin-top: 5px;
+  transition: color 0.3s ease;
 }
 
 .settings-actions {
@@ -370,5 +375,38 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+// 深色主题样式 - 使用 Element Plus 的暗色主题
+:deep(.el-drawer) {
+  .el-drawer__header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+
+  .el-drawer__body {
+    padding: 0;
+  }
+}
+
+:deep(.el-dialog) {
+  .el-dialog__header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+
+  .el-dialog__footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+  }
+}
+
+h3 {
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-top: 0;
 }
 </style>

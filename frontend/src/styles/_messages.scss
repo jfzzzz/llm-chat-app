@@ -41,12 +41,19 @@
   background-color: var(--primary-color);
 }
 
+// 消息内容包装器
+.message-content-wrapper {
+  max-width: 80%;
+  min-width: 0; // 允许子元素收缩
+}
+
 // 消息卡片
 .message-card {
-  max-width: 80%;
+  width: 100%;
   border-radius: $border-radius;
   box-shadow: $card-shadow;
   position: relative;
+  overflow: hidden; // 防止内容溢出
 
   .message-row.user & {
     background-color: var(--user-bubble);
@@ -61,21 +68,34 @@
 
 // 模型标签
 .model-tag {
-  position: absolute;
-  top: -18px;
-  left: 10px;
+  display: inline-block;
   font-size: $font-size-small;
   color: var(--text-color);
   background-color: var(--sidebar-hover);
   padding: 2px 6px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
+  margin-bottom: 5px;
 }
 
 // 消息内容
 .message-content {
-  margin-top: $spacing-xs;
   color: var(--text-color);
+  word-wrap: break-word; // 允许长单词折行
+  word-break: break-word; // 在合适的位置折断单词
+  overflow-wrap: break-word; // 现代浏览器的折行属性
+
+  // 确保所有内容都能正确折行
+  p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, table {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  // 确保图片不会溢出
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 
   // 错误操作区域
   .error-action {

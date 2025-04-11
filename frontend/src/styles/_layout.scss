@@ -123,4 +123,26 @@
   background-color: var(--sidebar-color);
   border-top: 1px solid var(--border-color);
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+
+  // 思考模式切换按钮
+  .thinking-mode-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: $spacing-sm;
+
+    .el-switch {
+      margin-right: $spacing-sm;
+    }
+
+    .info-icon {
+      color: var(--text-color);
+      opacity: 0.6;
+      cursor: pointer;
+      font-size: $font-size-small;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }

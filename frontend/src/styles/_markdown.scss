@@ -12,6 +12,9 @@
     color: var(--code-text);
     font-family: monospace;
     white-space: pre;
+    padding-top: 2em;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   code:not(.hljs) {
@@ -28,6 +31,11 @@
     position: relative;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: auto;
+    max-width: 100%;
+    white-space: pre;
+    word-wrap: normal;
+    word-break: normal;
 
     // 行号样式
     &.with-line-numbers {
@@ -47,14 +55,13 @@
         background-color: rgba(0, 0, 0, 0.1);
         border-top-left-radius: 6px;
         border-bottom-left-radius: 6px;
-        display: flex;
-        flex-direction: column;
         padding-top: 2em; // 为语言标签预留空间
         font-family: monospace;
         font-size: 16px;
         color: var(--code-line-number-color);
         text-align: right;
         user-select: none;
+        overflow: hidden;
       }
 
       .line-number {
@@ -62,11 +69,14 @@
         line-height: 1.5;
         height: 1.5em; // 固定行高，确保与代码文本对齐
         box-sizing: border-box;
+        display: block;
       }
 
       // 调整代码块内容的对齐
       code.with-line-numbers {
-        padding-left: 0; // 移除左侧填充，因为行号已经占据了这个空间
+        padding-left: 1em; // 移除左侧填充，因为行号已经占据了这个空间
+        display: block;
+        overflow-x: auto;
       }
     }
 
@@ -131,10 +141,15 @@
     width: 100%;
     border-collapse: collapse;
     margin: 1em 0;
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
 
     th, td {
       padding: 0.5em 1em;
       border: 1px solid var(--code-border);
+      min-width: 100px; // 防止单元格过窄
+      word-break: break-word;
     }
 
     th {
@@ -153,6 +168,13 @@
   ul, ol {
     padding-left: 2em;
     margin: 1em 0;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    li {
+      margin-bottom: 0.5em;
+      word-break: break-word;
+    }
   }
 
   img {

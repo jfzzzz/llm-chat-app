@@ -39,13 +39,31 @@ app.get('/api/models', (req, res) => {
   res.json(AVAILABLE_MODELS);
 });
 
+// 简单的聊天 API 端点，用于测试
+app.post('/api/chat-simple', (req, res) => {
+  const { message } = req.body;
+
+  if (!message) {
+    return res.status(400).json({ error: 'Message is required' });
+  }
+
+  // 返回一个简单的回复
+  res.json({
+    text: `您发送的消息是: "${message}"。这是一个测试回复。`
+  });
+});
+
 // 聊天 API 端点
 app.post('/api/chat', async (req, res) => {
   // 从请求体中获取参数
-  const { message, model, apiKey, provider, endpoint } = req.body;
+  const { message, messages, model, apiKey, provider, endpoint } = req.body;
 
-  if (!message) {
-    return res.status(400).send('Message is required in the request body');
+  if (!message && (!messages || messages.length === 0)) {
+    console.error('Missing message or messages in request body:', req.body);
+    return res.status(400).json({
+      error: 'Either message or messages is required in the request body',
+      receivedBody: req.body
+    });
   }
 
   // 使用提供的API密钥或默认密钥
@@ -71,14 +89,31 @@ app.post('/api/chat', async (req, res) => {
   res.flushHeaders(); // 刷新响应头以建立连接
 
   try {
+    // 准备消息数组
+    let apiMessages = [];
+
+    // 如果提供了消息历史，使用它
+    if (messages && messages.length > 0) {
+      // 确保系统消息在最前面
+      apiMessages = [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        ...messages
+      ];
+    } else {
+      // 否则只使用当前消息
+      apiMessages = [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: message }
+      ];
+    }
+
+    console.log('Sending request to API with messages:', JSON.stringify(apiMessages, null, 2));
+
     const response = await axios.post(
       useEndpoint,
       {
         model: useModel, // 使用选定的模型
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: message }
-        ],
+        messages: apiMessages,
         stream: true, // 启用流式传输
       },
       {

@@ -1,0 +1,51 @@
+@use 'variables' as *;
+
+// 聊天项
+.chat-item {
+  padding: $spacing-sm $spacing-md;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $border-color;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $sidebar-hover;
+  }
+
+  &.active {
+    background-color: $sidebar-active;
+  }
+}
+
+// 聊天项内容
+.chat-item-content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  overflow: hidden;
+  flex: 1;
+}
+
+// 聊天标题
+.chat-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: $font-size-normal;
+}
+
+// 聊天操作
+.chat-actions {
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  .chat-item:hover & {
+    opacity: 1;
+  }
+
+  .chat-item.active & {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,59 @@
+@use 'variables' as *;
+
+// Markdown 内容样式
+.message-card {
+  .hljs {
+    background: #f8f8f8;
+    border-radius: 6px;
+    padding: 1em;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+
+  code:not(.hljs) {
+    background: #f3f3f3;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+
+  pre {
+    margin: 1em 0;
+    position: relative;
+  }
+
+  .markdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+
+    th, td {
+      padding: 0.5em 1em;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid $primary-color;
+    margin: 1em 0;
+    padding: 0 1em;
+    color: #555;
+    background-color: #f8fafc;
+  }
+
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+
+  img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+}

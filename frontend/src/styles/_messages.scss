@@ -1,0 +1,109 @@
+@use 'variables' as *;
+
+// 消息行
+.message-row {
+  display: flex;
+  margin-bottom: $spacing-lg;
+  align-items: flex-start;
+
+  &.user {
+    justify-content: flex-end;
+  }
+
+  &.llm {
+    justify-content: flex-start;
+  }
+}
+
+// 头像容器
+.avatar-container {
+  margin: 0 $spacing-sm;
+}
+
+// 头像
+.avatar {
+  width: $avatar-size;
+  height: $avatar-size;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: $font-size-medium;
+  color: white;
+}
+
+.user-avatar {
+  background-color: $gray-color;
+}
+
+.ai-avatar {
+  background-color: $primary-color;
+}
+
+// 消息卡片
+.message-card {
+  max-width: 80%;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+  position: relative;
+
+  .message-row.user & {
+    background-color: $user-bubble;
+    border: 1px solid $border-color;
+  }
+
+  .message-row.llm & {
+    background-color: $ai-bubble;
+    border: 1px solid $border-color;
+  }
+}
+
+// 模型标签
+.model-tag {
+  position: absolute;
+  top: -18px;
+  left: 10px;
+  font-size: $font-size-small;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+// 消息内容
+.message-content {
+  margin-top: $spacing-xs;
+
+  // 错误操作区域
+  .error-action {
+    margin-top: $spacing-md;
+    text-align: center;
+
+    .open-settings-btn {
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: $font-size-normal;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+// 加载指示器
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-color;
+  margin: $spacing-lg 0;
+  gap: $spacing-sm;
+}

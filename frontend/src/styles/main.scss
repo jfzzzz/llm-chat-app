@@ -1,0 +1,53 @@
+@use 'variables' as *;
+@use 'layout';
+@use 'messages';
+@use 'chat-items';
+@use 'markdown';
+
+// 全局样式
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $text-color;
+  background-color: $bg-color;
+}
+
+// Element Plus 自定义样式
+.el-input {
+  --el-input-bg-color: $sidebar-color;
+}
+
+.el-button-group {
+  gap: $spacing-sm;
+}
+
+.el-button--danger {
+  --el-button-danger-bg-color: $danger-color;
+}
+
+// 自定义滚动条
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

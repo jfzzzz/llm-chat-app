@@ -222,29 +222,43 @@ app.post('/api/chat', async (req, res) => {
     if (!res.headersSent) {
       // 构建详细的错误消息
       let errorMessage = 'Failed to connect to API';
+      let statusCode = 500;
+
       if (error.response) {
-        errorMessage += `: ${error.response.status} ${error.response.statusText}`;
-        if (error.response.data) {
-          try {
-            const errorData = typeof error.response.data === 'string'
-              ? error.response.data
-              : JSON.stringify(error.response.data);
-            errorMessage += ` - ${errorData}`;
-          } catch (e) {
-            errorMessage += ' - Error details available in server logs';
+        statusCode = error.response.status;
+
+        // 特殊处理 401 Unauthorized 错误
+        if (error.response.status === 401) {
+          errorMessage = '认证失败: API 密钥无效或已过期。请在设置中更新您的 API 密钥。';
+        } else {
+          errorMessage += `: ${error.response.status} ${error.response.statusText}`;
+          if (error.response.data) {
+            try {
+              const errorData = typeof error.response.data === 'string'
+                ? error.response.data
+                : JSON.stringify(error.response.data);
+              errorMessage += ` - ${errorData}`;
+            } catch (e) {
+              errorMessage += ' - Error details available in server logs';
+            }
           }
         }
       } else if (error.message) {
         errorMessage += `: ${error.message}`;
       }
 
-      res.status(500).send(errorMessage);
+      res.status(statusCode).send(errorMessage);
     } else {
       // 如果流已建立但稍后失败，尝试发送错误事件
       let errorMessage = 'API connection failed';
-      if (error.message) {
+
+      // 特殊处理 401 Unauthorized 错误
+      if (error.response && error.response.status === 401) {
+        errorMessage = '认证失败: API 密钥无效或已过期。请在设置中更新您的 API 密钥。';
+      } else if (error.message) {
         errorMessage += `: ${error.message}`;
       }
+
       res.write(`data: ${JSON.stringify({ error: errorMessage })}\n\n`);
       res.end();
     }

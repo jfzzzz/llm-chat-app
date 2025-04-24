@@ -30,10 +30,15 @@ llm-chat-app/
 ```bash
 cd backend
 npm install
+
+# 生产环境启动
 npm start
+
+# 开发环境启动（使用 nodemon 自动重启）
+npm run dev
 ```
 
-服务将运行在: http://localhost:3000
+服务将运行在: http://localhost:3001
 
 ### 前端应用
 
@@ -52,7 +57,14 @@ npm run dev
 在 `backend/.env` 文件中配置 (可从 `.env.example` 复制并修改):
 
 ```ini
-DEEPSEEK_API_KEY=your_api_key_here
+# 主要 API 密钥
+OPENAI_API_KEY=your_openai_api_key_here
+
+# 其他提供商 API 密钥（可选）
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# 服务器配置
 PORT=3000
 ```
 
@@ -89,10 +101,10 @@ const backendUrlBase = 'http://localhost:3000/api/chat';
 ## 开发建议
 
 1. 先启动后端服务，再启动前端
-2. 开发时可以使用 `npm run dev` 热重载
+2. 开发时可以使用 `npm run dev` 启动开发模式（后端使用 nodemon 热重载）
 3. 生产构建使用 `npm run build`
 4. 使用 `npm run install:all` 安装所有依赖
-5. 使用 `npm run start` 同时启动前端和后端
+5. 使用 `npm run start` 同时启动前端和后端（生产模式）
 
 ## 贡献
 

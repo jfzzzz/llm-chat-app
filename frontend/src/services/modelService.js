@@ -24,6 +24,7 @@ export const loadModels = () => {
   // 如果没有模型，添加默认模型
   if (models.value.length === 0) {
     models.value = [
+      { id: 'deepseek-reasoner', name: 'DeepSeek Reasoner', provider: 'deepseek' },
       { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek' },
       { id: 'deepseek-coder', name: 'DeepSeek Coder', provider: 'deepseek' }
     ];

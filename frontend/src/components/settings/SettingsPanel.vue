@@ -11,6 +11,25 @@
       <h3>API 配置</h3>
 
       <el-form label-position="top">
+        <!-- 系统提示设置 -->
+        <el-form-item label="系统提示 (System Prompt)">
+          <el-input
+            v-model="systemPromptValue"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入系统提示，不填则使用默认值"
+          />
+        </el-form-item>
+
+        <!-- 流式输出开关 -->
+        <el-form-item label="流式输出">
+          <el-switch
+            v-model="streamOutputValue"
+            active-text="启用"
+            inactive-text="关闭"
+          />
+          <div class="setting-description">启用流式输出可实时看到回答，关闭则一次性返回完整回答</div>
+        </el-form-item>
         <!-- API 提供商选择 -->
         <el-form-item label="API 提供商">
           <el-select
@@ -120,15 +139,20 @@
 import { ref, watch, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
-import { 
-  apiKey, 
-  selectedModel, 
-  selectedProvider, 
-  apiEndpoint, 
-  models, 
-  saveApiSettings, 
-  addModel 
+import {
+  apiKey,
+  selectedModel,
+  selectedProvider,
+  apiEndpoint,
+  models,
+  saveApiSettings,
+  addModel
 } from '../../services/modelService';
+import {
+  systemPrompt,
+  streamOutput,
+  saveChatSettings
+} from '../../services/chatSettingsService';
 
 // 属性定义
 const props = defineProps({
@@ -159,6 +183,10 @@ const newModel = ref({
 // 对话框状态
 const showAddModelDialog = ref(false);
 
+// 聊天设置
+const systemPromptValue = ref(systemPrompt.value);
+const streamOutputValue = ref(streamOutput.value);
+
 // 根据当前选择的提供商过滤模型
 const filteredModels = computed(() => {
   if (!selectedProvider.value) return models.value;
@@ -176,16 +204,16 @@ const handleProviderChange = (value) => {
       name: value
     });
   }
-  
+
   // 更新新模型表单中的提供商
   newModel.value.provider = value;
-  
+
   // 如果当前选中的模型不属于新的提供商，清空选择
   const currentModel = models.value.find(m => m.id === selectedModel.value);
   if (currentModel && currentModel.provider !== value) {
     selectedModel.value = '';
   }
-  
+
   // 根据提供商更新默认API端点
   if (value === 'openai') {
     apiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
@@ -208,8 +236,10 @@ const resetSettings = () => {
   if (confirm('确定要重置所有设置吗？这将清除您的API密钥和其他配置。')) {
     apiKey.value = '';
     selectedModel.value = '';
-    selectedProvider.value = 'deepseek';
+    selectedProvider.value = 'openai';
     apiEndpoint.value = '';
+    systemPromptValue.value = '';
+    streamOutputValue.value = true;
   }
 };
 
@@ -233,7 +263,7 @@ const addNewModel = () => {
     name: newModel.value.name,
     provider: newModel.value.provider
   };
-  
+
   addModel(model);
 
   // 选择新添加的模型
@@ -248,13 +278,21 @@ const addNewModel = () => {
 
 // 保存设置
 const saveSettings = () => {
+  // 保存 API 设置
   saveApiSettings();
+
+  // 保存聊天设置
+  systemPrompt.value = systemPromptValue.value;
+  streamOutput.value = streamOutputValue.value;
+  saveChatSettings();
 
   emit('settings-saved', {
     apiKey: apiKey.value,
     selectedModel: selectedModel.value,
     selectedProvider: selectedProvider.value,
-    apiEndpoint: apiEndpoint.value
+    apiEndpoint: apiEndpoint.value,
+    systemPrompt: systemPrompt.value,
+    streamOutput: streamOutput.value
   });
 
   ElMessage({
@@ -269,24 +307,30 @@ const saveSettings = () => {
 <style lang="scss" scoped>
 .settings-container {
   padding: 0 20px;
-  
+
   h3 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 18px;
     color: var(--text-color);
   }
-  
+
   .model-selection {
     display: flex;
     align-items: center;
   }
-  
+
+  .setting-description {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    margin-top: 5px;
+  }
+
   .settings-actions {
     margin-top: 30px;
     display: flex;
     justify-content: flex-end;
-    
+
     .el-button {
       margin-left: 10px;
     }

@@ -2,18 +2,18 @@
   <div class="chat-container">
     <!-- 聊天消息区域 -->
     <div class="chat-messages" ref="messagesContainer">
-      <ChatMessage 
-        v-for="msg in messages" 
-        :key="msg.id" 
-        :msg="msg" 
+      <ChatMessage
+        v-for="msg in messages"
+        :key="msg.id"
+        :msg="msg"
         :getModelName="(modelId) => getModelName(modelId, models)"
       />
-      
+
       <!-- 加载状态指示器 -->
       <div v-if="isLoading" class="loading-indicator">
         <el-icon class="is-loading"><Loading /></el-icon> 思考中...
       </div>
-      
+
       <!-- 空聊天提示 -->
       <div v-if="messages.length === 0" class="empty-chat">
         <el-empty description="开始一个新的对话吧！">
@@ -21,10 +21,10 @@
         </el-empty>
       </div>
     </div>
-    
+
     <!-- 聊天输入区域 -->
     <div class="chat-input-area">
-      <ChatInput 
+      <ChatInput
         ref="chatInput"
         :modelId="selectedModel"
         :isLoading="isLoading"
@@ -59,12 +59,13 @@ watch(messages, () => {
 }, { deep: true });
 
 // 处理发送消息
-const handleSendMessage = async () => {
+const handleSendMessage = async (messageData) => {
   await sendMessage(
     apiKey.value,
     selectedModel.value,
     selectedProvider.value,
-    apiEndpoint.value
+    apiEndpoint.value,
+    messageData
   );
 };
 
@@ -90,29 +91,29 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  
+
   .chat-messages {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
   }
-  
+
   .chat-input-area {
     padding: 10px 20px 20px;
   }
-  
+
   .loading-indicator {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 20px 0;
     color: var(--text-color-secondary);
-    
+
     .el-icon {
       margin-right: 8px;
     }
   }
-  
+
   .empty-chat {
     display: flex;
     flex-direction: column;

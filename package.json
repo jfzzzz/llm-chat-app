@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start:backend": "cd backend && npm start",
+    "dev:backend": "cd backend && npm run dev",
     "start:frontend": "cd frontend && npm run dev",
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run start:frontend\"",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm run build"
   },

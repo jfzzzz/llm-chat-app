@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { generateId } from '../utils/helpers';
 import { thinkingModeEnabled, supportsThinkingMode } from './thinkingModeService';
+import { systemPrompt, streamOutput } from './chatSettingsService';
 
 // 聊天状态
 export const messages = ref([]);
@@ -132,16 +133,42 @@ export const loadChatHistory = () => {
  * @param {string} selectedModel - 选中的模型
  * @param {string} selectedProvider - 选中的提供商
  * @param {string} apiEndpoint - API端点
+ * @param {Object} messageData - 消息数据，包含文本和文件
  */
-export const sendMessage = async (apiKey, selectedModel, selectedProvider, apiEndpoint) => {
-  if (!newMessage.value.trim() || isLoading.value) return;
+export const sendMessage = async (apiKey, selectedModel, selectedProvider, apiEndpoint, messageData = {}) => {
+  // 如果没有消息数据，使用旧的方式
+  const messageText = messageData.text || newMessage.value;
+  const file = messageData.file || null;
+
+  // 如果没有消息文本也没有文件，或者正在加载，则返回
+  if ((!messageText.trim() && !file) || isLoading.value) return;
+
+  // 构建消息文本，如果有文件则添加文件信息
+  let finalMessageText = messageText;
+  let fileInfo = null;
+
+  if (file) {
+    fileInfo = {
+      filename: file.filename,
+      originalname: file.originalname || file.filename,
+      path: file.path,
+      size: file.size,
+      mimetype: file.mimetype
+    };
+
+    // 如果消息为空，添加默认文本
+    if (!finalMessageText.trim()) {
+      finalMessageText = `请分析这个文件: ${fileInfo.originalname || fileInfo.filename}`;
+    }
+  }
 
   // 添加用户消息
   const userMessage = {
     id: nextMessageId++,
     sender: 'user',
-    text: newMessage.value,
-    timestamp: new Date().toISOString()
+    text: finalMessageText,
+    timestamp: new Date().toISOString(),
+    file: fileInfo
   };
 
   messages.value.push(userMessage);
@@ -190,22 +217,42 @@ export const sendMessage = async (apiKey, selectedModel, selectedProvider, apiEn
     }
 
     // 构建消息历史数组，用于上下文理解
-    const messageHistory = filteredMessages.map(m => ({
-      role: m.sender === 'user' ? 'user' : 'assistant',
-      content: m.text
-    }));
+    const messageHistory = filteredMessages.map(m => {
+      const messageObj = {
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text
+      };
+
+      // 如果是用户消息并且有文件，添加文件信息
+      if (m.sender === 'user' && m.file) {
+        messageObj.file = m.file;
+      }
+
+      return messageObj;
+    });
 
     const requestData = {
       model: selectedModel,
       provider: selectedProvider,
       apiKey: apiKey, // 使用 apiKey 而不是 api_key
       message: lastUserMessage.text, // 发送最后一条用户消息
-      messages: messageHistory // 发送完整的消息历史供模型参考
+      messages: messageHistory, // 发送完整的消息历史供模型参考
+      stream: streamOutput.value // 流式输出设置
     };
+
+    // 如果最后一条消息有文件，添加文件信息
+    if (lastUserMessage.file) {
+      requestData.file = lastUserMessage.file;
+    }
 
     // 添加API端点参数（如果已提供）
     if (apiEndpoint) {
       requestData.endpoint = apiEndpoint;
+    }
+
+    // 添加系统提示（如果已提供）
+    if (systemPrompt.value) {
+      requestData.systemPrompt = systemPrompt.value;
     }
 
     // 添加思考模式参数（如果开启）
@@ -217,8 +264,10 @@ export const sendMessage = async (apiKey, selectedModel, selectedProvider, apiEn
     let responseText = '';
 
     // 发送请求
-    // 直接使用 /api/chat 端点对接模型
-    const response = await fetch('/api/chat', {
+    // 使用完整的 URL 路径确保请求发送到正确的服务器
+    const apiUrl = window.location.origin + '/api/chat';
+    console.log('发送请求到:', apiUrl);
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
